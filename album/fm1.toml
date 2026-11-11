@@ -1,0 +1,13 @@
+# Album 02: the build's settings (base/tools/build.py)
+name = "ALBUM02"
+id_prefix = "FM-1_2702"                # package identity: dev FM-1_270200, releases FM-1_2702XXYYZZ
+usb_manufacturer = "Album"
+usb_product = "ALBUM 02 FM-1"
+o2 = []                                # the sound, at -O2 (dsp/engine.c, when it lands)
+words = "words.tsv"
+ble = false                            # no Bluetooth in Album 02: MIDI is USB and TRS in
+# the site (base/tools/make_site.py)
+tagline = "Album 02. Five tracks of filter-house: each sound with its own moving picture."
+repo = "https://github.com/joshbartlettband-web/album-02-fm1"
+licence = "MIT"
+credits = "Built on fm1-base (Charles Vestal) and felucca-bsp (Leo Kuroshita, Hugelton Instruments)."
