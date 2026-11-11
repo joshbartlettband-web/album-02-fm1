@@ -59,6 +59,16 @@ jobs:
           TC="$(ls -d ~/.jieli/jieli-linux-toolchains-* | sort | tail -1)"
           ln -sfn "$(basename "$TC")" ~/.jieli/toolchain
           echo "JIELI_TOOLCHAIN=$HOME/.jieli/toolchain" >> "$GITHUB_ENV"
+      - name: JieLi AC79 SDK (gitee.com, a fixed tag; the three files a package needs, no Bluetooth)
+        run: |
+          for i in 1 2 3; do
+            git clone --depth 1 --branch AC79NN_SDK_V1.2.1_2023-12-13 \
+                https://gitee.com/Jieli-Tech/fw-AC79_AIoT_SDK.git ~/fw-AC79_AIoT_SDK && break
+            rm -rf ~/fw-AC79_AIoT_SDK
+            sleep 20
+          done
+          test -d ~/fw-AC79_AIoT_SDK
+          echo "AC79_SDK=$HOME/fw-AC79_AIoT_SDK" >> "$GITHUB_ENV"
       - name: Version
         run: echo "V=0.1.${{ github.run_number }}" >> "$GITHUB_ENV"
       - name: Firmware
