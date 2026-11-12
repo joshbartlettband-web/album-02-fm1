@@ -27,22 +27,22 @@ the mouth, and notes slide into each other.
 ## The pictures
 
 Each patch has its own visualiser: a scene in the manner of 1970s space-opera animation (flat cel colours, deep
-navy, magenta, cyan, gold) built from two layers.
+navy, magenta, cyan, gold), drawn entirely by code. No painted backdrops and no stored pictures: every shape is
+computed each frame, so every shape can move.
 
-- A painted backdrop, kept in flash as a 240 x 240 palettised picture, as Album 01 keeps its photos
-  (`tools/photos.py` carries over).
-- Moving parts drawn by code over it: stars, light trails, rings, beams, an equaliser skyline. These are what the
-  sound moves.
+Fifteen scenes, one a patch, built from a shared kit of parts: starfields in layers, ringed planets, light trails,
+beams, horizon grids, an equaliser skyline, waveforms. A scene is a short function that places those parts and
+says which of the sound's numbers moves each.
 
 Every knob and effect moves something the eye can name. Examples: Sweep closes like an iris; Pump dips the whole
-scene's light on each kick; the chorus doubles the outlines; the phaser slides colour bands across; the grit effect
-coarsens the pixels; the voice's vowel changes the shape of a waveform mouth. No dials, no numbers except a knob's
-value for a moment while it turns, as in Album 01.
+scene's light on each kick; the chorus doubles the outlines; the phaser slides colour bands across; Grit coarsens
+the pixels; the voice's vowel changes the shape of a waveform mouth. No dials, no numbers except a knob's value
+for a moment while it turns, as in Album 01.
 
 The screen shows the chosen track's patch. The other tracks still reach it: the kick pulses every scene.
 
-Backdrops can be drawn with the Gemini image API, then cropped and palettised by the photo tool. On 2026-11-11 the
-API refused with "prepayment credits are depleted", so no test picture has been made.
+The engine already reports what the scenes follow: each track's level, the kick's pulse, the pump's dip, the
+phaser's and the chorus's sweep, the vowel.
 
 ## Controls
 
@@ -76,8 +76,26 @@ start-up from the second core's troubles.
 - The KeyStep Pro's five knobs in control mode map to the five knobs here by controller number.
 - USB MIDI in and out as in Album 01.
 
-Because the KeyStep Pro does the sequencing, the FM-1's own sequencer stays small: one pattern a track, recorded
-by playing, for use without it. No scenes, chains or step editing in the first version.
+- The FM-1 can also play USB host (fm1-base's `usb_host`), so a KeyStep Pro on its own power supply may connect
+  by USB alone through an adapter. To be tried once the TRS route works.
+
+## The sequencer
+
+The KeyStep Pro's way of working, on the FM-1 itself, for when it travels alone. A doodle becomes a song by the
+same three steps:
+
+- **Patterns.** Each track has 16, up to 64 steps each. Recorded by playing along (quantised or not), or step by
+  step: SEQ lit, the lower 16 keys are the steps and the upper keys the page and the length. Per step: pitch, gate,
+  velocity, a shift in time, a chance. Per pattern: length, swing, direction.
+- **Scenes.** A scene is one pattern chosen on each of the five tracks: a verse, a chorus, a breakdown. Sixteen,
+  called up from the keys with HOME held, changing on the bar.
+- **Chains.** Up to 16 scenes in a row, each for a number of bars: the song.
+
+Also from the KeyStep Pro: the arpeggiator's modes, chord mode, mute and solo a track, and its five step knobs
+(pitch, gate, velocity, time shift, randomness) on K1 to K4 and ALGORITHM while a step is held.
+
+The clock is the FM-1's own, or MIDI clock when it arrives. A project (patterns, scenes, the chain, the patches
+and knobs) saves as a whole; several projects are kept.
 
 ## Two cores
 
@@ -104,12 +122,13 @@ default with one core as the fallback.
 
 ## Order of work
 
-1. Engine in the simulator: the five tracks, one patch each, the pump. Listen to rendered WAVs.
-2. MIDI: channels, clock, the KeyStep Pro's controllers.
-3. The other ten patches, each checked against the rule above.
-4. The visualisers: the moving parts first, then backdrops once the image API has credit.
+1. Done: the engine in the simulator. Five tracks, three patches each, the pump, sweep, phaser, chorus, grit, echo
+   and reverb; played from the keys and over MIDI on a channel a track.
+2. MIDI clock and the KeyStep Pro's controllers.
+3. The sequencer: patterns first, then scenes, then chains, then saving projects.
+4. The visualisers: the kit of parts, then the fifteen scenes.
 5. The second core on hardware.
-6. The manual, the site, the Firmware Hub card.
+6. Each patch tuned by ear on the FM-1; the manual, the site, the Firmware Hub card.
 
 Every push builds the firmware and the browser emulator on GitHub, so each step can be heard and installed from
 a phone.

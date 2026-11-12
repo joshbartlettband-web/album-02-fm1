@@ -1,45 +1,83 @@
-# The template in the host simulator: tools/build.py template --host, then
-#   template/build/host/template_host template/tests/basic.txt template/build/host
-wait 600
-shot boot.png
-key 7 down
-wait 50
-expect note 60
-expect midi_out 1
-shot key.png
-key 7 up
-wait 50
-expect note -1
-tap OCT+
-wait 30
-expect octave 1
-expect dirty 1
-turn PRESET 1
-wait 30
-expect wave 1
-turn K3 3
+# Album 02: the tracks, the patches, the knobs, saving, MIDI in
+wait 800
+expect track 2
+expect patch 0
+master 3400
+# a key plays the chosen track
+wav chord.wav
+key w6 down 96
 wait 300
-expect turns5 3
-press FX
-wait 30
-shot controls.png
-release FX
-tap SAVE
-wait 30
-expect dirty 0
-expect store_writes 1
-reboot
+expect note 64
+key w6 up
 wait 600
-expect octave 1
-expect wave 1
-midi 90 3C 64
-wait 30
-expect note 60
-wav note.wav
-wait 200
 wavstop
-expect peak_db_min -30
-midi 80 3C 00
+expect peak_db_min -40
+# SELECT picks the track, PRESET its patch
 listen
-wait 100
-said ALBUM. OCTAVE +1. WAVE TRIANGLE
+turn SELECT 1
+wait 60
+said LEAD BRASS
+expect track 3
+turn PRESET 1
+wait 60
+said LEAD GLASS
+expect patch 1
+turn PRESET 2
+wait 60
+expect patch 0
+turn SELECT 5
+wait 60
+expect track 4
+said VOX CHOIR
+# the knobs: K1 TONE is this track's own, K3 PUMP is everyone's; EDIT held, K1 is PHASER
+turn K1 -4
+wait 60
+said TONE
+expect knob0 28
+turn K3 2
+wait 60
+said PUMP
+press EDIT
+wait 40
+turn K1 8
+wait 60
+said PHASER 12
+release EDIT
+wait 40
+expect knob5 8
+# the octave
+tap OCT+
+wait 60
+said OCTAVE +1
+expect octave 1
+# SAVE keeps it across a restart
+expect dirty 1
+tap SAVE
+wait 60
+said SAVED
+expect dirty 0
+reboot
+wait 1000
+expect track 4
+expect octave 1
+expect knob0 28
+expect knob5 8
+# MIDI in: each track on its own channel, the drums on 10 as well
+turn SELECT -3
+wait 60
+expect track 1
+midi 91 21 64
+wait 60
+expect note 33
+midi 81 21 00
+wait 60
+expect note -1
+wav kick.wav
+midi 99 24 7F
+wait 500
+wavstop
+expect peak_db_min -20
+# nothing left sounding
+tap HOME
+wait 3000
+expect voices 0

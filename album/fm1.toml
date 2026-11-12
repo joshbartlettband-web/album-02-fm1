@@ -3,7 +3,8 @@ name = "ALBUM02"
 id_prefix = "FM-1_2702"                # package identity: dev FM-1_270200, releases FM-1_2702XXYYZZ
 usb_manufacturer = "Album"
 usb_product = "ALBUM 02 FM-1"
-o2 = []                                # the sound, at -O2 (dsp/engine.c, when it lands)
+o2 = ["dsp/engine.c"]                  # the sound, at -O2
+include = ["dsp"]
 words = "words.tsv"
 ble = false                            # no Bluetooth in Album 02: MIDI is USB and TRS in
 # the site (base/tools/make_site.py)
