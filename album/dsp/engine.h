@@ -19,6 +19,7 @@
 #define ENG_BLOCK_MAX 256u
 #define ENG_SUB 16u                      /* samples between pitch and filter updates */
 #define ENG_CHORD_VOICES 6u
+#define ENG_PATCHES 3                    /* patches a track */
 #define ENG_DRUM_PARTS 12u               /* a part a semitone: C kick, C# rim, D snare, D# clap, E snare 2, F low tom,
                                           * F# closed hat, G mid tom, G# pedal hat, A high tom, A# open hat, B cowbell */
 

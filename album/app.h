@@ -9,8 +9,8 @@
 #define APP_NAME "ALBUM"
 #define APP_TAGLINE "02"
 #define APP_SPLASH_RGB RGB(255, 60, 170)
-#define APP_BLOCK 256u                   /* frames per audio block: 5.8 ms at 44.1 kHz */
-#define APP_CANVAS_PX (240u * 144u)
+#define APP_BLOCK 128u                   /* frames per audio block: 2.9 ms at 44.1 kHz (the sequencer's timing) */
+#define APP_CANVAS_PX (240u * 48u)       /* the screen is drawn in five strips of 48 rows */
 #define APP_TOUCH                        /* velocity and pressure from the keys (lib/touch.h) */
 
 /* the store: the app's settings and the panel calibration (the platform's) */

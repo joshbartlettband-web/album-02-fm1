@@ -3,10 +3,12 @@ name = "ALBUM02"
 id_prefix = "FM-1_2702"                # package identity: dev FM-1_270200, releases FM-1_2702XXYYZZ
 usb_manufacturer = "Album"
 usb_product = "ALBUM 02 FM-1"
-o2 = ["dsp/engine.c"]                  # the sound, at -O2
+o2 = ["dsp/engine.c", "dsp/seq.c"]     # the sound and the sequencer, at -O2
 include = ["dsp"]
 words = "words.tsv"
 ble = false                            # no Bluetooth in Album 02: MIDI is USB and TRS in
+cpu2 = true                            # the second core renders the chords and the echo and reverb
+cpu2_fallback = true                   # and after a failure, one core until power-off (no restart)
 # the site (base/tools/make_site.py)
 tagline = "Album 02. Five tracks of filter-house: each sound with its own moving picture."
 repo = "https://github.com/joshbartlettband-web/album-02-fm1"

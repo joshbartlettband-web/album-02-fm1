@@ -1,0 +1,287 @@
+# Album 02: the sequencer. Steps on the keys, play, patterns, scenes, the chain, recording, the arp, chord mode,
+# saving, MIDI clock
+wait 800
+master 3400
+listen
+turn SELECT -2
+wait 40
+expect track 0
+# step mode: the white keys are the steps; on the drums they place the part ALGORITHM picks (KICK first)
+tap SEQ
+wait 40
+said STEPS ON THE KEYS
+tapkey w0 100
+tapkey w4 100
+tapkey w8 100
+tapkey w12 100
+expect steps 4
+expect step0 36
+expect step4 36
+turn ALGO 2
+wait 40
+said PART SNARE
+tapkey w4 100
+expect step4 36
+# a filled step tapped takes that part out again
+tapkey w4 100
+expect steps 4
+tapkey w4 100
+# a step held, K3: its velocity
+key w12 down 100
+turn K3 -5
+wait 40
+said VELOCITY 80
+key w12 up
+wait 40
+expect steps 4
+# play: the steps go out over USB on the drums' channel
+out
+tap PLAY
+wait 100
+expect playing 1
+expect_out USB 90 24 64
+wait 500
+expect_out USB 90 26 64
+expect_out USB 90 24 64
+wait 1400
+expect_out USB 90 24 50
+tap PLAY
+wait 60
+expect playing 0
+# HOME held: a white key picks the pattern; held a second, this one is copied there first
+press HOME
+wait 30
+tapkey w1 100
+release HOME
+wait 40
+expect pattern 1
+expect steps 0
+press HOME
+wait 30
+tapkey w0 100
+wait 30
+key w2 down 100
+wait 1100
+said COPIED TO 3
+key w2 up
+release HOME
+wait 40
+expect pattern 2
+expect steps 4
+# HOME tapped alone: every note let go (and nothing else)
+tap HOME
+wait 40
+said ALL NOTES OFF
+# SEQ held: the length
+press SEQ
+turn ALGO -8
+wait 30
+said LENGTH 8
+release SEQ
+wait 40
+expect len 8
+tap SEQ
+wait 40
+said STEPS OFF
+# ENV held, a key held a second: a scene stored; LFO held: scenes into the chain
+press ENV
+wait 30
+key w0 down 100
+wait 1100
+said SCENE 1 STORED
+key w0 up
+release ENV
+wait 40
+expect scene 0
+press HOME
+tapkey w5 100
+release HOME
+wait 30
+press ENV
+key w1 down 100
+wait 1100
+key w1 up
+release ENV
+press LFO
+tapkey w0 100
+tapkey w1 100
+tapkey w1 100
+turn ALGO 1
+wait 30
+said BARS 2
+release LFO
+wait 30
+expect chain 3
+tap LFO
+wait 30
+said CHAIN ON
+# the chain plays its first scene from the start
+tap PLAY
+wait 100
+expect pattern 2
+tap PLAY
+wait 60
+# recording a step at a time, on the chords: a chord, a note, each into the next step
+turn SELECT 2
+wait 40
+expect track 2
+tap REC
+wait 30
+said RECORD A STEP AT A TIME
+key w0 down 90
+key w2 down 90
+wait 50
+key w0 up
+key w2 up
+wait 40
+tapkey w4 90
+wait 40
+tap REC
+wait 30
+expect step0 53
+expect step1 60
+expect steps 2
+# the arpeggiator on the chords: two keys held, each note played and let go in turn
+tap ARP
+wait 30
+expect arp 1
+out
+key w0 down 90
+key w4 down 90
+wait 700
+expect_out USB 82 35 00
+expect_out USB 82 3C 00
+key w0 up
+key w4 up
+tap ARP
+wait 30
+expect arp 0
+# chord mode: SCL tapped with three keys held keeps the chord; one key then plays all three
+key w0 down 90
+key w2 down 90
+key w4 down 90
+wait 30
+tap SEL
+wait 30
+said CHORD KEPT
+key w0 up
+key w2 up
+key w4 up
+wait 30
+expect chord 3
+out
+tapkey w7 90
+wait 60
+expect_out USB 82 41 00
+expect_out USB 82 45 00
+expect_out USB 82 48 00
+tap SEL
+wait 30
+expect chord 0
+# SAVE keeps the project across a restart
+tap SAVE
+wait 200
+said SAVED 1
+expect dirty 0
+reboot
+wait 1000
+listen
+expect track 2
+expect steps 2
+expect chain 3
+turn SELECT -2
+wait 30
+expect pattern 2
+expect len 8
+# MIDI clock: the tempo follows it, start and stop play and stop
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+midi F8
+wait 18
+expect bpm 125
+midi FA
+wait 20
+expect playing 1
+midi F8
+wait 18
+midi FC
+wait 30
+expect playing 0
+# recording while it plays: a note on the bass lands on the step it was played nearest (0.71 s in: the seventh)
+wait 700
+turn SELECT 1
+wait 40
+expect track 1
+expect steps 0
+tap PLAY
+wait 30
+tap REC
+wait 30
+said RECORD ON
+wait 470
+key w3 down 100
+wait 240
+key w3 up
+wait 200
+tap REC
+tap PLAY
+wait 60
+expect steps 1
+expect step6 35
+# the KeyStep Pro's knobs: CC 74 on a track's channel is its TONE, CC 91 on any is SPACE; a program change, the patch
+midi B1 4A 00
+wait 60
+expect knob0 0
+midi B3 5B 7F
+wait 60
+expect knob4 64
+midi C1 02 00
+wait 60
+expect patch 2
+said BASS ROUND
