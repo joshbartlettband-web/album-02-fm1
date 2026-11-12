@@ -1,0 +1,12 @@
+{
+  "what": "Five tracks of filter-house: drums, bass, chords, lead and a singing voice, three patches each, pumping on the kick. Every patch has its own moving picture drawn by code. A sequencer after the KeyStep Pro's: patterns, scenes, chains, arp and chord mode, with MIDI clock.",
+  "author": "Alive-Stable-7254",
+  "kinds": [
+    "synth",
+    "groovebox"
+  ],
+  "play": "https://joshbartlettband-web.github.io/album-02-fm1/emu/",
+  "cheat": "https://joshbartlettband-web.github.io/album-02-fm1/manual/",
+  "image": "album/docs/img/screen-playing.png",
+  "color": "#FF3CAA"
+}

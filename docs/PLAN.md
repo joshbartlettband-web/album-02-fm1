@@ -122,13 +122,9 @@ default with one core as the fallback.
 
 ## Order of work
 
-1. Done: the engine in the simulator. Five tracks, three patches each, the pump, sweep, phaser, chorus, grit, echo
-   and reverb; played from the keys and over MIDI on a channel a track.
-2. MIDI clock and the KeyStep Pro's controllers.
-3. The sequencer: patterns first, then scenes, then chains, then saving projects.
-4. The visualisers: the kit of parts, then the fifteen scenes.
-5. The second core on hardware.
-6. Each patch tuned by ear on the FM-1; the manual, the site, the Firmware Hub card.
-
-Every push builds the firmware and the browser emulator on GitHub, so each step can be heard and installed from
-a phone.
+1. Done: the engine. Five tracks, three patches each, the pump, sweep, phaser, chorus, grit, echo and reverb.
+2. Done: MIDI. A channel a track, clock in and out, controllers, program changes.
+3. Done: the sequencer. Patterns, step mode, recording, scenes, chains, the arpeggiator, chord mode, projects.
+4. Done: the fifteen pictures.
+5. Done in code: the second core, with one core taking over. Wants a soak on a real FM-1.
+6. Next: each patch tuned by ear on the FM-1; the CPU load read from GLO's page under a full song.

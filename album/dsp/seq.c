@@ -20,7 +20,7 @@ seq_song_t seq_song;
 static int32_t tk;                       /* ticks: the clock now */
 static float tk_fr;                      /* and the part of a tick */
 static volatile float bpm = 123.0f;
-static volatile uint8_t playing, recording, want_play, want_stop;
+static volatile uint8_t playing, recording, want_play, want_stop, want_release;
 static int32_t play_at;                  /* the tick play started at: bars count from it */
 static uint32_t ext_ticks;               /* MIDI clock: ticks counted since its start, and the samples between them */
 static uint32_t ext_since, ext_period = 0;
@@ -511,6 +511,11 @@ void seq_render(uint32_t n)
         key_in(kq[i].track, kq[i].note, kq[i].vel);
         kq_tail++;
     }
+    if (want_release) {
+        want_release = 0;
+        held_all_off(-1);
+        memset(arp, 0, sizeof arp);
+    }
     if (want_stop) {
         want_stop = 0;
         playing = 0;
@@ -749,11 +754,7 @@ void seq_mute(int track, int on)
     else
         seq_song.mute &= (uint8_t)~(1u << track);
 }
-void seq_panic(void)
-{
-    want_stop = playing;
-    memset(arp, 0, sizeof arp);
-}
+void seq_panic(void) { want_release = 1; }   /* the patterns play on; what they and the arp hold now, let go */
 void seq_tempo(float b) { bpm = fm_clampf(b, 40.0f, 240.0f); }
 float seq_tempo_get(void) { return ext_on && ext_bpm > 20.0f ? ext_bpm : bpm; }
 int seq_clock_ext(void) { return ext_on; }

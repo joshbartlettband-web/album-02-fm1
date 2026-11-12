@@ -1,12 +1,59 @@
-# Album 02: a screenshot while a chord sounds
+# Album 02: the manual's screenshots: album/build/host/album02_host album/tests/screens.txt album/docs/img
 wait 900
 master 3400
-key w4 down 100
-key w6 down 100
-key w8 down 100
+# a chord on PAD, the kick under it
+midi 92 39 64
+midi 92 3C 64
+midi 92 40 64
+midi 99 24 7F
 wait 400
+midi 99 24 7F
+wait 300
 shot screen-playing.png
-key w4 up
-key w6 up
-key w8 up
+midi 82 39 00
+midi 82 3C 00
+midi 82 40 00
+# step mode on the drums, a beat in it, playing
+turn SELECT -2
+wait 30
+tap SEQ
+tapkey w0 100
+tapkey w4 100
+tapkey w8 100
+tapkey w12 100
+turn ALGO 6
+tapkey w2 100
+tapkey w6 100
+tapkey w10 100
+tapkey w14 100
+tap PLAY
+wait 1500
+shot screen-steps.png
+# HOME held: the patterns
+press HOME
+wait 400
+shot screen-patterns.png
+release HOME
+# GLO held: tempo, the cores, the project
+press GLO
+wait 400
+shot screen-global.png
+release GLO
+tap PLAY
+wait 100
+tap SEQ
+# the effects up on the lead's GLASS
+turn SELECT 3
+turn PRESET 1
+press EDIT
+turn K1 30
+turn K2 40
+turn K3 12
+turn K4 30
+release EDIT
+wait 1500
+midi 93 51 64
+wait 600
+shot screen-effects.png
+midi 83 51 00
 wait 200

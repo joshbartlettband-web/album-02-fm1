@@ -98,7 +98,7 @@ void seq_chain_drop(void);
 void seq_chain_bars(int d);
 int seq_chain_pos(void);                 /* the chain's entry playing, -1 off */
 void seq_mute(int track, int on);
-void seq_panic(void);                    /* every note the sequencer holds, let go */
+void seq_panic(void);                    /* every note the sequencer and the arp hold, let go (play goes on) */
 void seq_tempo(float bpm);
 float seq_tempo_get(void);               /* the tempo heard: the FM-1's own, or MIDI clock's */
 int seq_clock_ext(void);                 /* 1 while MIDI clock comes in */

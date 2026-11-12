@@ -285,3 +285,36 @@ midi C1 02 00
 wait 60
 expect patch 2
 said BASS ROUND
+# projects: GLO held, PRESET to project 2, let go: unsaved changes are asked about first; asked again, it opens empty
+turn K3 4
+wait 30
+press GLO
+wait 300
+turn PRESET 1
+wait 30
+release GLO
+wait 40
+said NOT SAVED
+press GLO
+wait 300
+turn PRESET -1
+turn PRESET 1
+wait 30
+release GLO
+wait 40
+said PROJECT 2 NEW
+expect slot 1
+expect chain 0
+# and back to project 1, with all it held
+press GLO
+wait 300
+turn PRESET -1
+wait 30
+release GLO
+wait 40
+said PROJECT 1 OPEN
+expect chain 3
+# the whole sound's knobs answer on any channel
+midi BF 55 00
+wait 40
+expect knob2 0

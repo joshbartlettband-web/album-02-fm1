@@ -181,8 +181,13 @@ static void midi_in(void)                /* the render: the packets that came in
         }
         if (st != 0xFEu)
             midi_count++;
-        if (t < 0)
+        if (t < 0) {                     /* not a track's channel: only the whole sound's knobs */
+            if ((st & 0xF0u) == 0xB0u && (k = cc_knob(d1)) > K_MOTION) {
+                eng_knob(0, k, (float)d2 * (1.0f / 127.0f));
+                midi_knob_seen = 1;
+            }
             continue;
+        }
         switch (st & 0xF0u) {
         case 0x90u:
             seq_midi_note(t, (int)d1, (int)d2);
@@ -270,6 +275,8 @@ static struct {
     uint8_t lane[NTRACK];                /* drums in step mode: the part the steps place */
     step_t last[NTRACK];                 /* what an empty step gets: the last thing played or placed on the track */
     uint8_t target;                      /* GLO held: the project SAVE saves into, PRESET picks */
+    uint8_t target_turned;               /* PRESET turned during this hold: GLO let go opens the target */
+    int8_t confirm;                      /* the project asked for while this one had changes: asked again, opened */
     uint32_t taps[4];                    /* GLO tapped: the tempo from the gaps */
     uint8_t ntap;
     uint8_t redraw;
@@ -588,6 +595,7 @@ static void turn(int enc, int32_t e, int page)
             say_num("TEMPO", snd.bpm, 0);
         } else if (enc == EN_PRESET) {
             ui.target = (uint8_t)clamp(ui.target + e, 0, PROJ_SLOTS - 1);
+            ui.target_turned = 1;
             say_num("PROJECT", ui.target + 1, ui.target == set.slot ? " OPEN" :
                     set.bank_of[ui.target] == 0xFFu ? " EMPTY" : 0);
         } else if (enc == EN_K1) {
@@ -688,8 +696,10 @@ static void button_down(uint32_t k, uint32_t btn)
     case B_SAVE: {
         int slot = page == HOLD_GLO ? ui.target : set.slot;
         app_say("SAVING", "");
-        if (page == HOLD_GLO)
+        if (page == HOLD_GLO) {
             mark_used(btn);
+            ui.target_turned = 0;        /* saved there: it is open now, nothing to open on letting go */
+        }
         if (project_save(slot) == 0)
             say_num("SAVED", slot + 1, 0);
         else
@@ -913,7 +923,23 @@ static void input(void)
             button_down(k, btn);
             ui.redraw = 1;
         } else if (!(btn & bit) && (ui.btn & bit)) {
-            if (!ui.btn_used[k] && now - ui.btn_at[k] < 600u)
+            if (k == B_GLO && ui.target_turned) {   /* a project chosen: opened (asked twice if this one changed) */
+                ui.target_turned = 0;
+                if (ui.target == set.slot) {
+                    ui.confirm = -1;
+                } else if (dirty && ui.confirm != (int8_t)ui.target) {
+                    ui.confirm = (int8_t)ui.target;
+                    app_say("NOT SAVED", "SAVE, OR CHOOSE IT AGAIN");
+                } else {
+                    keys_release();
+                    project_open(ui.target);
+                    plat_store_save(OBJ_SETTINGS, &set, sizeof set);
+                    ui.confirm = -1;
+                    say_num("PROJECT", set.slot + 1, set.bank_of[set.slot] == 0xFFu ? " NEW" : " OPEN");
+                }
+            }
+            /* a tap is short: a longer press was a look at its page */
+            if (!ui.btn_used[k] && now - ui.btn_at[k] < (k == B_GLO ? 250u : 350u))
                 button_tap(k);
             ui.redraw = 1;
         }
@@ -1260,6 +1286,7 @@ void app_ui_init(void)
     lcd_fill(0, 0, 240, 240, C_BLACK);
     ui.step_held = -1;
     ui.target = set.slot;
+    ui.confirm = -1;
     vis_init();
     ui.redraw = 1;
 }
